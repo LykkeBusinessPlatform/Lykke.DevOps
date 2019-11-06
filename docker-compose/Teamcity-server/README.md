@@ -1,0 +1,1 @@
+docker-compose file to run teamcity server with 3 dotnet-build-agents

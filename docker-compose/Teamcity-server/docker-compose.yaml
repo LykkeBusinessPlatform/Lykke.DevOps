@@ -1,0 +1,102 @@
+version: "2"
+services:
+  teamcity-server:
+    image: jetbrains/teamcity-server:2019.1.3
+    restart: always
+    container_name: teamcity-server
+    networks:
+      teamcity:
+        ipv4_address: 172.25.0.2
+    ports:
+      - "8112:8111"
+    volumes:
+      - /ext/teamcity/data_dir:/data/teamcity_server/datadir
+      - /ext/teamcity/log_dir:/opt/teamcity/logs
+  teamcity-dotnet-agent-1:
+    image: thelittledevops/teamcity-agent:2.7
+    restart: always
+    container_name: teamcity-dotnet-agent-1
+    networks:
+      teamcity:
+        ipv4_address: 172.25.0.3
+    environment:
+      - SERVER_URL=http://172.25.0.2:8111
+      - AGENT_NAME=dotnet_agent-1
+      - DOCKER_IN_DOCKER=start
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /ext/teamcity/agent-data/conf:/data/teamcity_agent/conf
+      - /ext/teamcity/agent-data/work:/opt/buildagent/work
+      - /ext/teamcity/agent-data/temp:/opt/buildagent/temp
+      - /ext/teamcity/agent-data/plugins:/opt/buildagent/plugins
+      - /ext/teamcity/agent-data/system:/opt/buildagent/system
+      - /ext/teamcity/kubeconfig:/home/primelabsx/.kube
+      - /ext/teamcity/tools_agent1:/opt/buildagent/tools
+      - /ext/teamcity/openvpn/dev-vpn:/etc/openvpn/dev-vpn
+      - /ext/teamcity/openvpn/test-vpn:/etc/openvpn/test-vpn
+      - /ext/teamcity/openvpn/staging-vpn:/etc/openvpn/staging-vpn
+      - /ext/teamcity/Kubernetes-Test:/home/primelabsx/Kubernetes-Test
+      - /ext/teamcity/Kubernetes-Staging:/home/primelabsx/Kubernetes-Staging
+      - /mnt/emrtestenvstatus:/status
+  teamcity-dotnet-agent-2:
+    image: thelittledevops/teamcity-agent:2.7
+    restart: always
+    container_name: teamcity-dotnet-agent-2
+    networks:
+      teamcity:
+        ipv4_address: 172.25.0.4
+    environment:
+      - SERVER_URL=http://172.25.0.2:8111
+      - AGENT_NAME=dotnet_agent-2
+      - DOCKER_IN_DOCKER=start
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /ext/teamcity/agent-data-2/conf:/data/teamcity_agent/conf
+      - /ext/teamcity/agent-data-2/work:/opt/buildagent/work
+      - /ext/teamcity/agent-data-2/temp:/opt/buildagent/temp
+      - /ext/teamcity/agent-data-2/plugins:/opt/buildagent/plugins
+      - /ext/teamcity/agent-data-2/system:/opt/buildagent/system
+      - /ext/teamcity/kubeconfig:/home/primelabsx/.kube
+      - /ext/teamcity/tools:/opt/buildagent/tools:ro
+      - /ext/teamcity/openvpn/dev-vpn:/etc/openvpn/dev-vpn
+      - /ext/teamcity/openvpn/test-vpn:/etc/openvpn/test-vpn
+      - /ext/teamcity/openvpn/staging-vpn:/etc/openvpn/staging-vpn
+      - /ext/teamcity/Kubernetes-Test:/home/primelabsx/Kubernetes-Test
+      - /ext/teamcity/Kubernetes-Staging:/home/primelabsx/Kubernetes-Staging
+      - /mnt/emrtestenvstatus:/status
+  teamcity-dotnet-agent-3:
+    image: build-agent:0.1
+    restart: always
+    container_name: teamcity-dotnet-agent-3
+    networks:
+      teamcity:
+        ipv4_address: 172.25.0.5
+    environment:
+      - SERVER_URL=http://172.25.0.2:8111
+      - AGENT_NAME=dotnet_agent-3
+      - DOCKER_IN_DOCKER=start
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /ext/teamcity/agent-data-3/conf:/data/teamcity_agent/conf
+      - /ext/teamcity/agent-data-3/work:/opt/buildagent/work
+      - /ext/teamcity/agent-data-3/temp:/opt/buildagent/temp
+      - /ext/teamcity/agent-data-3/plugins:/opt/buildagent/plugins
+      - /ext/teamcity/agent-data-3/system:/opt/buildagent/system
+      - /ext/teamcity/kubeconfig:/home/primelabsx/.kube
+      - /ext/teamcity/tools_agent3:/opt/buildagent/tools
+      - /ext/teamcity/openvpn/dev-vpn:/etc/openvpn/dev-vpn
+      - /ext/teamcity/openvpn/test-vpn:/etc/openvpn/test-vpn
+      - /ext/teamcity/openvpn/staging-vpn:/etc/openvpn/staging-vpn
+      - /ext/teamcity/Kubernetes-Test:/home/primelabsx/Kubernetes-Test
+      - /ext/teamcity/Kubernetes-Staging:/home/primelabsx/Kubernetes-Staging
+      - /mnt/emrtestenvstatus:/status
+networks:
+  teamcity:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.25.0.0/24
+         gateway: 172.25.0.1
