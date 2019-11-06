@@ -67,7 +67,7 @@ services:
       - /ext/teamcity/Kubernetes-Staging:/home/primelabsx/Kubernetes-Staging
       - /mnt/emrtestenvstatus:/status
   teamcity-dotnet-agent-3:
-    image: build-agent:0.1
+    image: thelittledevops/teamcity-agent:2.7
     restart: always
     container_name: teamcity-dotnet-agent-3
     networks:
