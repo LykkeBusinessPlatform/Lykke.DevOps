@@ -1,0 +1,66 @@
+{
+    "apiVersion": "vlabs",
+    "properties": {
+      "orchestratorProfile": {
+        "orchestratorType": "Kubernetes",
+        "orchestratorVersion": "1.14.1",
+        "kubernetesConfig": {
+          "kubernetesImageBase": "gcrio.azureedge.net/google_containers/",
+          "enableRbac": true,
+          "etcdDiskSizeGB": "30",
+          "networkPolicy": "calico",
+          "networkPlugin": "azure",
+          "dnsServiceIP": "10.16.0.10",
+          "serviceCidr": "10.16.0.0/16",
+          "kubeletConfig": {
+          "--max-pods": "110",
+          "--non-masquerade-cidr": "10.16.0.0/16"
+          }
+        }
+      },
+      "masterProfile": {
+        "count": 1,
+        "dnsPrefix": "emaar-kubernetes-test",
+        "vmSize": "Standard_F2s",
+        "osDiskSizeGB": 30,
+        "vnetSubnetID": "",
+        "vnetCidr": "10.92.224.0/20",
+        "firstConsecutiveStaticIP": "10.92.239.239",
+        "storageProfile" : "ManagedDisks"
+      },
+      "agentPoolProfiles": [
+        {
+          "name": "services",
+          "count": 2,
+          "vmSize": "Standard_B2ms",
+          "osDiskSizeGB": 30,
+          "availabilityProfile": "VirtualMachineScaleSets",
+          "vnetSubnetId": "",
+          "storageProfile" : "ManagedDisks"
+        },
+        {
+          "name": "monitoring",
+          "count": 2,
+          "vmSize": "Standard_B2ms",
+          "osDiskSizeGB": 30,
+          "availabilityProfile": "VirtualMachineScaleSets",
+          "vnetSubnetId": "",
+          "storageProfile" : "ManagedDisks"
+        }
+      ],
+      "linuxProfile": {
+        "adminUsername": "lykkex",
+        "ssh": {
+          "publicKeys": [
+            {
+              "keyData": "$ssh_pub_key"
+            }
+          ]
+        }
+      },
+      "servicePrincipalProfile": {
+        "clientId": "$clientId",
+        "secret": "$secret"
+      }
+    }
+  }
